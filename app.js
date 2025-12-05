@@ -19,7 +19,8 @@ class Post {
 
 class UI {
   addPostToList(post) {
-    const div = $("<div/>").addClass("col-12 col-md-4").html(`<div class='card'>
+    const div = $("<div/>").addClass("post col-12 col-md-4")
+      .html(`<div class='card'>
         <div class='card-body'>
         <h5 class='card-title'>${post.title}</h5>
         <div class='card-subtitle mb-2 badge text-bg-secondary'>${post.author}</div>
@@ -50,11 +51,48 @@ class UI {
       alert.html("");
     }, 3000);
   }
+
+  deletePost(target) {
+    console.log($(target).closest(".post"));
+    // $(target).parent().parent().parent().remove();
+    $(target).closest(".post").remove();
+  }
+}
+
+class Storage {
+  static getPosts() {
+    let posts;
+    if (localStorage.getItem("posts") === null) {
+      posts = [];
+    } else {
+      posts = JSON.parse(localStorage.getItem("posts"));
+    }
+    // console.log(posts);
+    return posts;
+  }
+
+  static addPost(post) {
+    let posts = Storage.getPosts();
+    posts.push(post);
+    localStorage.setItem("posts", JSON.stringify(posts));
+    console.log("post added to localStorage");
+  }
+
+  static displayPosts() {
+    const posts = Storage.getPosts();
+    const uI = new UI();
+
+    posts.forEach((post) => {
+      uI.addPostToList(post);
+    });
+  }
 }
 
 // ready Codes
 $(document).ready(function () {
+  Storage.displayPosts();
   postForm.submit(submitForm);
+  postList.click(deletePost);
 });
 
 // functions
@@ -68,8 +106,20 @@ function submitForm(e) {
     return;
   }
   uI.addPostToList(post);
+  Storage.addPost(post);
   uI.clearInputs();
 
   uI.showAlert("Post added succesfully!!!", "success");
   console.log(post);
+}
+
+function deletePost(e) {
+  e.preventDefault();
+  // console.log(e.target);
+  const uI = new UI();
+
+  if ($(e.target).hasClass("post-delete")) {
+    uI.deletePost(e.target);
+    uI.showAlert("The Post has been Deleted!!!!", "danger");
+  }
 }
