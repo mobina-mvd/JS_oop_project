@@ -86,12 +86,19 @@ class Storage {
       uI.addPostToList(post);
     });
   }
+
+  static removePost(title) {
+    let posts = Storage.getPosts();
+    posts = posts.filter((post) => post.title !== title);
+    localStorage.setItem("posts", JSON.stringify(posts));
+  }
 }
 
 // ready Codes
 $(document).ready(function () {
   Storage.displayPosts();
   postForm.submit(submitForm);
+
   postList.click(deletePost);
 });
 
@@ -116,10 +123,12 @@ function submitForm(e) {
 function deletePost(e) {
   e.preventDefault();
   // console.log(e.target);
+  const postTitle = $(e.target).parent().children().first().text();
   const uI = new UI();
 
   if ($(e.target).hasClass("post-delete")) {
     uI.deletePost(e.target);
+    Storage.removePost(postTitle);
     uI.showAlert("The Post has been Deleted!!!!", "danger");
   }
 }
