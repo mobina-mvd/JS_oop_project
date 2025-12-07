@@ -126,7 +126,15 @@ function submitForm(e) {
 
   if (title.val() === "" || author.val() === "" || body.val() === "") {
     console.log("All Field are Required!!!");
-    uI.showAlert("All Field are Required!!!", "danger", 3000);
+    // uI.showAlert( "All Field are Required!!!", "danger", 3000 );
+    Swal.fire({
+      title: "Error",
+      text: "All Field are Required!!!",
+      icon: "error",
+      timer: 3000,
+    });
+    btnSubmit.removeClass("loading");
+    btnSubmit.text("Create");
     return;
   }
   setTimeout(() => {
@@ -135,7 +143,13 @@ function submitForm(e) {
     uI.addPostToList(post);
     Storage.addPost(post);
     uI.clearInputs();
-    uI.showAlert("Post added succesfully!!!", "success", 3000);
+    // uI.showAlert( "Post added succesfully!!!", "success", 3000 );
+    Swal.fire({
+      title: "Success",
+      text: "Post added succesfully!!!",
+      icon: "success",
+      timer: 3000,
+    });
     console.log(post);
   }, 1000);
 }
@@ -147,8 +161,20 @@ function deletePost(e) {
   const uI = new UI();
 
   if ($(e.target).hasClass("post-delete")) {
-    uI.deletePost(e.target);
-    Storage.removePost(postTitle);
-    uI.showAlert("The Post has been Deleted!!!!", "danger", 3000);
+    Swal.fire({
+      title: "Are you sure?",
+      text: "This operation cannot be reversed!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // console.log("حذف انجام شد");
+        uI.deletePost(e.target);
+        Storage.removePost(postTitle);
+      }
+    });
+    // uI.showAlert("The Post has been Deleted!!!!", "danger", 3000);
   }
 }
