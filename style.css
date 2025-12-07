@@ -1,0 +1,54 @@
+button {
+  position: relative;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  min-width: 80px; /* اندازه ثابت دکمه */
+  min-height: 40px;
+  /* display: inline-flex;
+  justify-content: center;
+  align-items: center; */
+}
+
+button.loading {
+  pointer-events: none; /* غیر فعال کردن کلیک */
+  color: transparent;   /* مخفی کردن متن */
+
+}
+
+button.loading::after {
+  content: "";
+  position: absolute;
+  top:  25%;
+  left: 40%;
+  width: 20px;
+  height: 20px;
+  border: 3px solid #fff;
+  border-top: 3px solid #000;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+
+#postList {
+  position: relative;
+  min-height: 200px; /* برای اینکه اسپینر وسط باشد */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* اسپینر بزرگ */
+.spinner-large {
+  width: 60px;
+  height: 60px;
+  border: 6px solid #ccc;
+  border-top: 6px solid #333;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg);}
+  100% { transform: rotate(360deg);}
+}

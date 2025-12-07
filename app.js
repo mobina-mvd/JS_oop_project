@@ -1,6 +1,7 @@
 const title = $("#title");
 const author = $("#author");
 const body = $("#body");
+const btnSubmit = $("#btn-submit");
 
 const alert = $("#alert");
 
@@ -37,7 +38,7 @@ class UI {
     body.val("");
   }
 
-  showAlert(message, className) {
+  showAlert(message, className, timeSet = true) {
     alert.html("");
 
     const alertDiv = $("<div></div>")
@@ -47,9 +48,11 @@ class UI {
 
     // console.log(alertDiv);
 
-    setTimeout(() => {
-      alert.html("");
-    }, 3000);
+    if (timeSet) {
+      setTimeout(() => {
+        alert.html("");
+      }, 3000);
+    }
   }
 
   deletePost(target) {
@@ -96,7 +99,18 @@ class Storage {
 
 // ready Codes
 $(document).ready(function () {
-  Storage.displayPosts();
+  const uI = new UI();
+  setTimeout(() => {
+    $("#loading").css("display", "none");
+    const posts = Storage.getPosts();
+    console.log(posts);
+
+    if (posts.length === 0) {
+      uI.showAlert("No Data Find !!!!", "warning", false);
+    }
+    Storage.displayPosts();
+  }, 2000);
+
   postForm.submit(submitForm);
 
   postList.click(deletePost);
@@ -105,19 +119,25 @@ $(document).ready(function () {
 // functions
 function submitForm(e) {
   e.preventDefault();
+  btnSubmit.addClass("loading");
+  btnSubmit.text("");
   const post = new Post(title.val(), author.val(), body.val());
   const uI = new UI();
+
   if (title.val() === "" || author.val() === "" || body.val() === "") {
     console.log("All Field are Required!!!");
-    uI.showAlert("All Field are Required!!!", "danger");
+    uI.showAlert("All Field are Required!!!", "danger", 3000);
     return;
   }
-  uI.addPostToList(post);
-  Storage.addPost(post);
-  uI.clearInputs();
-
-  uI.showAlert("Post added succesfully!!!", "success");
-  console.log(post);
+  setTimeout(() => {
+    btnSubmit.removeClass("loading");
+    btnSubmit.text("Create");
+    uI.addPostToList(post);
+    Storage.addPost(post);
+    uI.clearInputs();
+    uI.showAlert("Post added succesfully!!!", "success", 3000);
+    console.log(post);
+  }, 1000);
 }
 
 function deletePost(e) {
@@ -129,6 +149,6 @@ function deletePost(e) {
   if ($(e.target).hasClass("post-delete")) {
     uI.deletePost(e.target);
     Storage.removePost(postTitle);
-    uI.showAlert("The Post has been Deleted!!!!", "danger");
+    uI.showAlert("The Post has been Deleted!!!!", "danger", 3000);
   }
 }
